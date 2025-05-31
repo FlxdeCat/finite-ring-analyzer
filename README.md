@@ -1,8 +1,8 @@
-# 📘 Finite Ring Analyzer
+# Finite Ring Analyzer
 
 A tool for analyzing finite rings using custom-defined addition and multiplication tables.
 
-## 🚀 How to Run
+## How to Run
 
 ### Frontend
 *(Instructions coming soon...)*
@@ -21,17 +21,19 @@ A tool for analyzing finite rings using custom-defined addition and multiplicati
 
 3. Open your browser and visit http://127.0.0.1:8000/docs to explore the interactive Swagger UI.
 
-Example Backend Input:
-   elements = ["(0,0)", "(0,1)", "(1,0)", "(1,1)"]
-   add = [
-         ["(0,0)", "(0,1)", "(1,0)", "(1,1)"],
-         ["(0,1)", "(0,0)", "(1,1)", "(1,0)"],
-         ["(1,0)", "(1,1)", "(0,0)", "(0,1)"],
-         ["(1,1)", "(1,0)", "(0,1)", "(0,0)"]
-      ]
-   mul = [
-         ["(0,0)", "(0,0)", "(0,0)", "(0,0)"],
-         ["(0,0)", "(0,1)", "(0,0)", "(0,1)"],
-         ["(0,0)", "(0,0)", "(1,0)", "(1,0)"],
-         ["(0,0)", "(0,1)", "(1,0)", "(1,1)"]
-      ]
+### Example Backend Input:
+
+```python
+elements = ["(0,0)", "(0,1)", "(1,0)", "(1,1)"]
+add = [
+      ["(0,0)", "(0,1)", "(1,0)", "(1,1)"],
+      ["(0,1)", "(0,0)", "(1,1)", "(1,0)"],
+      ["(1,0)", "(1,1)", "(0,0)", "(0,1)"],
+      ["(1,1)", "(1,0)", "(0,1)", "(0,0)"]
+   ]
+mul = [
+      ["(0,0)", "(0,0)", "(0,0)", "(0,0)"],
+      ["(0,0)", "(0,1)", "(0,0)", "(0,1)"],
+      ["(0,0)", "(0,0)", "(1,0)", "(1,0)"],
+      ["(0,0)", "(0,1)", "(1,0)", "(1,1)"]
+   ]
