@@ -260,3 +260,5 @@ def analyze_ring(data: RingInput):
 # elements = [i for i in range(n)]
 # add = [[(i + j) % n for j in range(n)] for i in range(n)]
 # mul = [[(i * j) % n for j in range(n)] for i in range(n)]
+
+# uvicorn api:app --reload
