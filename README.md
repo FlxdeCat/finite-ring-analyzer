@@ -5,7 +5,9 @@ A tool for analyzing finite rings using custom-defined addition and multiplicati
 ## How to Run
 
 ### Frontend
-*(Instructions coming soon...)*
+```bash
+   npm i
+   npm run dev
 
 ### Backend
 
