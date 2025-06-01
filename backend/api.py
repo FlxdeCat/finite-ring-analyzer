@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 import numpy as np
@@ -8,6 +9,14 @@ import base64
 from io import BytesIO
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class RingInput(BaseModel):
     elements: List[str]
@@ -30,19 +39,19 @@ def analyze_ring(data: RingInput):
     add_index = table_index(add_element)
     mul_index = table_index(mul_element)
 
-    def is_closed(table):
+    def is_closed(table, op):
         for i in range(n):
             for j in range(n):
                 if not (0 <= table[i][j] < n):
-                    return False, f"{index_to_element[i]} op {index_to_element[j]} = invalid"
+                    return False, f"{index_to_element[i]} {op} {index_to_element[j]} = invalid"
         return True, ""
 
-    def is_associative(table):
+    def is_associative(table, op):
         for a in range(n):
             for b in range(n):
                 for c in range(n):
                     if table[table[a][b]][c] != table[a][table[b][c]]:
-                        return False, f"({index_to_element[a]} op {index_to_element[b]}) op {index_to_element[c]} != {index_to_element[a]} op ({index_to_element[b]} op {index_to_element[c]})"
+                        return False, f"({index_to_element[a]} {op} {index_to_element[b]}) {op} {index_to_element[c]} != {index_to_element[a]} {op} ({index_to_element[b]} {op} {index_to_element[c]})"
         return True, ""
 
     def get_add_identity():
@@ -57,11 +66,11 @@ def analyze_ring(data: RingInput):
                 return False, f"{index_to_element[a]} has no inverse"
         return True, ""
 
-    def is_commutative(table):
+    def is_commutative(table, op):
         for i in range(n):
             for j in range(n):
                 if table[i][j] != table[j][i]:
-                    return False, f"{index_to_element[i]} op {index_to_element[j]} != {index_to_element[j]} op {index_to_element[i]}"
+                    return False, f"{index_to_element[i]} {op} {index_to_element[j]} != {index_to_element[j]} {op} {index_to_element[i]}"
         return True, ""
 
     def is_distributive():
@@ -69,9 +78,9 @@ def analyze_ring(data: RingInput):
             for b in range(n):
                 for c in range(n):
                     if mul_index[a][add_index[b][c]] != add_index[mul_index[a][b]][mul_index[a][c]]:
-                        return False, f"{index_to_element[a]} * ({index_to_element[b]} + {index_to_element[c]}) != {index_to_element[a]}*{index_to_element[b]} + {index_to_element[a]}*{index_to_element[c]}"
+                        return False, f"{index_to_element[a]} * ({index_to_element[b]} + {index_to_element[c]}) != {index_to_element[a]} * {index_to_element[b]} + {index_to_element[a]} * {index_to_element[c]}"
                     if mul_index[add_index[b][c]][a] != add_index[mul_index[b][a]][mul_index[c][a]]:
-                        return False, f"({index_to_element[b]} + {index_to_element[c]}) * {index_to_element[a]} != {index_to_element[b]}*{index_to_element[a]} + {index_to_element[c]}*{index_to_element[a]}"
+                        return False, f"({index_to_element[b]} + {index_to_element[c]}) * {index_to_element[a]} != {index_to_element[b]} * {index_to_element[a]} + {index_to_element[c]} * {index_to_element[a]}"
         return True, ""
 
     def get_mul_identity():
@@ -96,20 +105,20 @@ def analyze_ring(data: RingInput):
                 return False, f"{index_to_element[a]} has no inverse"
         return True, ""
 
-    is_add_closed, is_add_closed_contradiction = is_closed(add_index)
-    is_add_associative, is_add_associative_contradiction = is_associative(add_index)
+    is_add_closed, is_add_closed_contradiction = is_closed(add_index, "+")
+    is_add_associative, is_add_associative_contradiction = is_associative(add_index, "+")
     add_identity = get_add_identity()
     has_add_identity = add_identity is not None
     is_add_inverse, is_add_inverse_contradiction = is_inverse(add_index, add_identity) if has_add_identity else (False, "No identity")
-    is_add_commutative, is_add_commutative_contradiction = is_commutative(add_index)
+    is_add_commutative, is_add_commutative_contradiction = is_commutative(add_index, "+")
     is_add_group = all([is_add_closed, is_add_associative, has_add_identity, is_add_inverse, is_add_commutative])
 
-    is_mul_closed, is_mul_closed_contradiction = is_closed(mul_index)
-    is_mul_associative, is_mul_associative_contradiction = is_associative(mul_index)
+    is_mul_closed, is_mul_closed_contradiction = is_closed(mul_index, "*")
+    is_mul_associative, is_mul_associative_contradiction = is_associative(mul_index, "*")
     is_distributive, is_distributive_contradiction = is_distributive()
     is_ring = is_add_group and is_mul_closed and is_mul_associative and is_distributive
 
-    is_mul_commutative, is_mul_commutative_contradiction = is_commutative(mul_index)
+    is_mul_commutative, is_mul_commutative_contradiction = is_commutative(mul_index, "*")
     mul_identity = get_mul_identity()
     has_mul_identity = mul_identity is not None
     has_mul_zero_divisors, has_mul_zero_divisors_contradiction = get_zero_divisors()
@@ -140,7 +149,13 @@ def analyze_ring(data: RingInput):
         insight_reasons.append("multiplication is not distributive over addition")
 
     if not is_ring:
-        insight = "This is not a ring because " + ", ".join(insight_reasons) + "."
+        if len(insight_reasons) > 2:
+            formatted = ", ".join(insight_reasons[:-1]) + ", and " + insight_reasons[-1]
+        elif len(insight_reasons) == 2:
+            formatted = " and ".join(insight_reasons)
+        elif insight_reasons:
+            formatted =  insight_reasons[0]
+        insight = "This is not a ring because " + formatted + "."
     else:
         if is_field:
             insight = "This is a finite field."
@@ -169,7 +184,13 @@ def analyze_ring(data: RingInput):
             if not is_distributive:
                 reasons.append("multiplication is not distributive over addition")
 
-            insight = "This is a ring, but it is not a field, integral domain, or division ring because " + ", ".join(reasons) + "."
+            if len(reasons) > 2:
+                formatted_reasons = ", ".join(reasons[:-1]) + ", and " + reasons[-1]
+            elif len(reasons) == 2:
+                formatted_reasons = " and ".join(reasons)
+            elif reasons:
+                formatted_reasons =  reasons[0]
+            insight = "This is a ring, but it is not a field, integral domain, or division ring because " + formatted_reasons + "."
 
     def fig_to_base64(fig):
         buf = BytesIO()
@@ -226,6 +247,7 @@ def analyze_ring(data: RingInput):
         "is_add_associative": is_add_associative,
         "is_add_associative_contradiction": is_add_associative_contradiction,
         "has_add_identity": has_add_identity,
+        "add_identity": index_to_element[add_identity] if has_add_identity else "",
         "is_add_inverse": is_add_inverse,
         "is_add_inverse_contradiction": is_add_inverse_contradiction,
         "is_add_commutative": is_add_commutative,
@@ -241,6 +263,7 @@ def analyze_ring(data: RingInput):
         "is_mul_commutative": is_mul_commutative,
         "is_mul_commutative_contradiction": is_mul_commutative_contradiction,
         "has_mul_identity": has_mul_identity,
+        "mul_identity": index_to_element[mul_identity] if has_mul_identity else "",
         "has_mul_zero_divisors": has_mul_zero_divisors,
         "has_mul_zero_divisors_contradiction": has_mul_zero_divisors_contradiction,
         "is_integral_domain": is_integral_domain,

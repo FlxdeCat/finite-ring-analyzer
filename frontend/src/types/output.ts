@@ -4,6 +4,7 @@ export interface Output {
   is_add_associative: boolean
   is_add_associative_contradiction: string
   has_add_identity: boolean
+  add_identity: string
   is_add_inverse: boolean
   is_add_inverse_contradiction: string
   is_add_commutative: boolean
@@ -23,6 +24,7 @@ export interface Output {
   is_mul_commutative: boolean
   is_mul_commutative_contradiction: string
   has_mul_identity: boolean
+  mul_identity: string
   has_mul_zero_divisors: boolean
   has_mul_zero_divisors_contradiction: string
 
@@ -36,12 +38,12 @@ export interface Output {
 
   insight: string
 
-  add_heatmap: File
-  mul_heatmap: File
+  add_heatmap: string
+  mul_heatmap: string
 
-  zero_divisor_graph: File
+  zero_divisor_graph: string
 
-  unit_graph: File
+  unit_graph: string
 
-  colormap: File
+  colormap: string
 }
