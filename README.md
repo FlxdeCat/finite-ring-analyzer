@@ -5,9 +5,11 @@ A tool for analyzing finite rings using custom-defined addition and multiplicati
 ## How to Run
 
 ### Frontend
-```bash
+
+   ```bash
    npm i
    npm run dev
+   ```
 
 ### Backend
 
@@ -15,11 +17,13 @@ A tool for analyzing finite rings using custom-defined addition and multiplicati
    
    ```bash
    pip install -r requirements.txt
+   ```
 
 2. Start the API server:
    
    ```bash
     uvicorn api:app --reload
+   ```
 
 3. Open your browser and visit http://127.0.0.1:8000/docs to explore the interactive Swagger UI.
 
