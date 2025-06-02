@@ -43,3 +43,17 @@ mul = [
       ["(0,0)", "(0,0)", "(1,0)", "(1,0)"],
       ["(0,0)", "(0,1)", "(1,0)", "(1,1)"]
    ]
+```
+
+### Example CSV Input
+```c
++,0,1
+0,0,1
+1,1,0
+,,
+*,0,1
+0,0,0
+1,0,1
+```
+First table will be the addition operation, while second is multiplication operation.
+The empty row acts as the separator
