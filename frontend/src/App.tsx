@@ -279,6 +279,13 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    if (res !== null) {
+      const element = document.getElementById("analysis-result")
+      if (element) element.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+  }, [res])
+
   const PropertyDisplay: React.FC<{
     label: string
     value: boolean | undefined
@@ -444,7 +451,7 @@ function App() {
         )}
 
         {res && (
-          <div className="bg-white/10 p-6 rounded-lg shadow-lg mt-2">
+          <div id="analysis-result" className="bg-white/10 p-6 rounded-lg shadow-lg mt-2">
             <h2 className="text-3xl font-bold mb-6 text-center border-b-2 border-white/30 pb-4">Analysis Results</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 ">
               <div className="pb-8 border-b-2 border-white/30 md:border-b-0 md:border-r-2 md:pr-8">
@@ -506,6 +513,7 @@ function App() {
                     <PropertyDisplay
                       label="Is a Ring"
                       value={res.is_ring}
+                      contradiction={res.is_ring_contradiction}
                     />
                   </div>
 
@@ -528,6 +536,7 @@ function App() {
                     <PropertyDisplay
                       label="Is an Integral Domain"
                       value={res.is_integral_domain}
+                      contradiction={res.is_integral_domain_contradiction}
                     />
                   </div>
                   <PropertyDisplay
@@ -539,10 +548,12 @@ function App() {
                     <PropertyDisplay
                       label="Is a Division Ring"
                       value={res.is_divison_ring as boolean}
+                      contradiction={res.is_divison_ring_contradiction}
                     />
                     <PropertyDisplay
                       label="Is a Field"
                       value={res.is_field}
+                      contradiction={res.is_field_contradiction}
                     />
                   </div>
                 </div>

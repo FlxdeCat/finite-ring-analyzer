@@ -127,6 +127,8 @@ def analyze_ring(data: RingInput):
     is_field = is_integral_domain and is_mul_inverse
     is_divison_ring = is_mul_inverse and has_mul_identity
 
+    is_ring_contradiction = is_field_contradiction = is_integral_domain_contradiction = is_divison_ring_contradiction = ""
+
     insight_reasons = []
 
     if not is_add_group:
@@ -201,8 +203,13 @@ def analyze_ring(data: RingInput):
 
     def heatmap(table, title, cmap):
         fig, ax = plt.subplots()
-        ax.imshow(table_index(table), cmap=cmap)
+        matrix = table_index(table)
+        ax.imshow(matrix, cmap=cmap)
         ax.set_title(title)
+        ax.set_xticks(range(n))
+        ax.set_xticklabels(elements)
+        ax.set_yticks(range(n))
+        ax.set_yticklabels(elements)
         return fig_to_base64(fig)
 
     def zero_divisor_graph():
@@ -237,9 +244,23 @@ def analyze_ring(data: RingInput):
 
     def colormap():
         fig, ax = plt.subplots()
-        cax = ax.matshow(table_index(mul_element), cmap="coolwarm")
-        fig.colorbar(cax)
+        matrix = table_index(mul_element)
+        cax = ax.matshow(matrix, cmap="coolwarm")
+        ax.set_xticks(range(n))
+        ax.set_xticklabels(elements)
+        ax.set_yticks(range(n))
+        ax.set_yticklabels(elements)
         return fig_to_base64(fig)
+    
+    if has_add_identity and has_mul_identity and add_identity == mul_identity:
+        is_ring = is_field = is_integral_domain = is_divison_ring = False
+        insight = "This cannot be a ring or field because the additive and multiplicative identities are the same."
+        is_ring_contradiction = is_field_contradiction = is_integral_domain_contradiction = is_divison_ring_contradiction = "1 == 0"
+
+    if n <= 1:
+        is_ring = is_field = is_integral_domain = is_divison_ring = False
+        insight = "This set cannot form a ring or field because it contains only one element."
+        is_ring_contradiction = is_field_contradiction = is_integral_domain_contradiction = is_divison_ring_contradiction = "Contains only one element"
 
     return {
         "is_add_closed": is_add_closed,
@@ -260,6 +281,7 @@ def analyze_ring(data: RingInput):
         "is_distributive": is_distributive,
         "is_distributive_contradiction": is_distributive_contradiction,
         "is_ring": is_ring,
+        "is_ring_contradiction": is_ring_contradiction,
         "is_mul_commutative": is_mul_commutative,
         "is_mul_commutative_contradiction": is_mul_commutative_contradiction,
         "has_mul_identity": has_mul_identity,
@@ -267,10 +289,13 @@ def analyze_ring(data: RingInput):
         "has_mul_zero_divisors": has_mul_zero_divisors,
         "has_mul_zero_divisors_contradiction": has_mul_zero_divisors_contradiction,
         "is_integral_domain": is_integral_domain,
+        "is_integral_domain_contradiction": is_integral_domain_contradiction,
         "is_mul_inverse": is_mul_inverse,
         "is_mul_inverse_contradiction": is_mul_inverse_contradiction,
         "is_field": is_field,
+        "is_field_contradiction": is_field_contradiction,
         "is_divison_ring": is_divison_ring,
+        "is_divison_ring_contradiction": is_divison_ring_contradiction,
         "insight": insight,
         "add_heatmap": heatmap(add_element, "Addition Table", "Blues"),
         "mul_heatmap": heatmap(mul_element, "Multiplication Table", "Reds"),

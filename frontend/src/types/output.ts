@@ -20,6 +20,7 @@ export interface Output {
   is_distributive_contradiction: string
 
   is_ring: boolean
+  is_ring_contradiction: string
 
   is_mul_commutative: boolean
   is_mul_commutative_contradiction: string
@@ -29,12 +30,15 @@ export interface Output {
   has_mul_zero_divisors_contradiction: string
 
   is_integral_domain: boolean
+  is_integral_domain_contradiction: string
 
   is_mul_inverse: boolean
   is_mul_inverse_contradiction: string
 
   is_field: boolean
+  is_field_contradiction: string
   is_divison_ring: Boolean
+  is_divison_ring_contradiction: string
 
   insight: string
 
