@@ -85,8 +85,6 @@ def analyze_ring(data: RingInput):
 
     def get_mul_identity():
         zero = get_add_identity()
-        if zero is None:
-            return False, ""
         for e in range(n):
             if e == zero:
                 continue
