@@ -534,7 +534,7 @@ function App() {
                   </div>
                   <PropertyDisplay
                     label="Has Zero Divisors"
-                    value={!res.has_mul_zero_divisors}
+                    value={res.has_mul_zero_divisors}
                     contradiction={res.has_mul_zero_divisors ? res.has_mul_zero_divisors_contradiction : ""}
                   />
                   <div className="mt-4 pt-4 border-t border-white/30">
