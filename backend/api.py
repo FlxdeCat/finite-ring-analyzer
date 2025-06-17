@@ -104,11 +104,15 @@ def analyze_ring(data: RingInput):
         return False, ""
 
     def is_mul_inverse(identity, zero):
+        found_nonzero = False
         for a in range(n):
             if a == identity or a == zero:
                 continue
+            found_nonzero = True
             if not any(mul_index[a][b] == identity and mul_index[b][a] == identity for b in range(n)):
                 return False, f"{index_to_element[a]} has no multiplicative inverse"
+        if not found_nonzero:
+            return False, "No nonzero elements to verify multiplicative inverses"
         return True, ""
 
     is_add_closed, is_add_closed_contradiction = is_closed(add_index, "+")
