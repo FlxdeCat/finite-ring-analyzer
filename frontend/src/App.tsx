@@ -374,8 +374,6 @@ function App() {
           </button>
         </div>
 
-        {/* TODO: Export / Import CSV */}
-
         {showTables && (
           <div className="flex flex-col gap-4">
             <div className="w-full flex justify-center">
@@ -516,17 +514,24 @@ function App() {
                       contradiction={res.is_ring_contradiction}
                     />
                   </div>
-
                   <PropertyDisplay
                     label="Commutativity"
                     value={res.is_mul_commutative}
                     contradiction={res.is_mul_commutative_contradiction}
                   />
                   <PropertyDisplay
-                    label="Multiplicative Identity"
-                    value={res.has_mul_identity}
-                    extraInfo={res.has_mul_identity ? `Element: ${res.mul_identity}` : ""}
+                    label="Is a Commutative Ring"
+                    value={res.is_commutative_ring}
+                    contradiction={res.is_commutative_ring_contradiction}
                   />
+
+                  <div className="mt-4 pt-4 border-t border-white/30">
+                    <PropertyDisplay
+                      label="Multiplicative Identity"
+                      value={res.has_mul_identity}
+                      extraInfo={res.has_mul_identity ? `Element: ${res.mul_identity}` : ""}
+                    />
+                  </div>
                   <PropertyDisplay
                     label="Has Zero Divisors"
                     value={!res.has_mul_zero_divisors}

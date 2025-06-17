@@ -24,6 +24,10 @@ export interface Output {
 
   is_mul_commutative: boolean
   is_mul_commutative_contradiction: string
+
+  is_commutative_ring: boolean
+  is_commutative_ring_contradiction: string
+
   has_mul_identity: boolean
   mul_identity: string
   has_mul_zero_divisors: boolean

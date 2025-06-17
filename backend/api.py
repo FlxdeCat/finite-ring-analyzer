@@ -97,12 +97,12 @@ def analyze_ring(data: RingInput):
                     return True, f"{index_to_element[a]} * {index_to_element[b]} = 0"
         return False, ""
 
-    def is_mul_inverse(identity):
+    def is_mul_inverse(identity, zero):
         for a in range(n):
-            if a == identity:
+            if a == identity or a == zero:
                 continue
-            if not any(mul_index[a][b] == identity for b in range(n)):
-                return False, f"{index_to_element[a]} has no inverse"
+            if not any(mul_index[a][b] == identity and mul_index[b][a] == identity for b in range(n)):
+                return False, f"{index_to_element[a]} has no multiplicative inverse"
         return True, ""
 
     is_add_closed, is_add_closed_contradiction = is_closed(add_index, "+")
@@ -119,15 +119,17 @@ def analyze_ring(data: RingInput):
     is_ring = is_add_group and is_mul_closed and is_mul_associative and is_distributive
 
     is_mul_commutative, is_mul_commutative_contradiction = is_commutative(mul_index, "*")
+    is_commutative_ring = is_ring and is_mul_commutative
+
     mul_identity = get_mul_identity()
     has_mul_identity = mul_identity is not None
     has_mul_zero_divisors, has_mul_zero_divisors_contradiction = get_zero_divisors()
     is_integral_domain = has_mul_identity and is_mul_commutative and not has_mul_zero_divisors
-    is_mul_inverse, is_mul_inverse_contradiction = is_mul_inverse(mul_identity) if has_mul_identity else (False, "No multiplicative identity")
+    is_mul_inverse, is_mul_inverse_contradiction = is_mul_inverse(mul_identity, add_identity) if has_mul_identity and has_add_identity else (False, "No identity")
     is_field = is_integral_domain and is_mul_inverse
-    is_divison_ring = is_mul_inverse and has_mul_identity
+    is_divison_ring = has_mul_identity and is_mul_inverse and not is_mul_commutative
 
-    is_ring_contradiction = is_field_contradiction = is_integral_domain_contradiction = is_divison_ring_contradiction = ""
+    is_commutative_ring_contradiction = is_ring_contradiction = is_field_contradiction = is_integral_domain_contradiction = is_divison_ring_contradiction = ""
 
     insight_reasons = []
 
@@ -232,7 +234,7 @@ def analyze_ring(data: RingInput):
         if not has_mul_identity:
             return ""
         G = nx.Graph()
-        units = [i for i in range(n) if i != mul_identity and any(mul_index[i][j] == mul_identity for j in range(n))]
+        units = [i for i in range(n) if i != mul_identity and i != add_identity and any(mul_index[i][j] == mul_identity and mul_index[j][i] == mul_identity for j in range(n))]
         G.add_nodes_from([elements[i] for i in units])
         for i in range(len(units)):
             for j in range(i+1, len(units)):
@@ -253,14 +255,14 @@ def analyze_ring(data: RingInput):
         return fig_to_base64(fig)
     
     if has_add_identity and has_mul_identity and add_identity == mul_identity:
-        is_ring = is_field = is_integral_domain = is_divison_ring = False
+        is_ring = is_commutative_ring = is_field = is_integral_domain = is_divison_ring = False
         insight = "This cannot be a ring or field because the additive and multiplicative identities are the same."
-        is_ring_contradiction = is_field_contradiction = is_integral_domain_contradiction = is_divison_ring_contradiction = "1 == 0"
+        is_commutative_ring_contradiction = is_ring_contradiction = is_field_contradiction = is_integral_domain_contradiction = is_divison_ring_contradiction = "1 == 0"
 
     if n <= 1:
-        is_ring = is_field = is_integral_domain = is_divison_ring = False
+        is_ring = is_commutative_ring = is_field = is_integral_domain = is_divison_ring = False
         insight = "This set cannot form a ring or field because it contains only one element."
-        is_ring_contradiction = is_field_contradiction = is_integral_domain_contradiction = is_divison_ring_contradiction = "Contains only one element"
+        is_commutative_ring_contradiction = is_ring_contradiction = is_field_contradiction = is_integral_domain_contradiction = is_divison_ring_contradiction = "Contains only one element"
 
     return {
         "is_add_closed": is_add_closed,
@@ -284,6 +286,8 @@ def analyze_ring(data: RingInput):
         "is_ring_contradiction": is_ring_contradiction,
         "is_mul_commutative": is_mul_commutative,
         "is_mul_commutative_contradiction": is_mul_commutative_contradiction,
+        "is_commutative_ring": is_commutative_ring,
+        "is_commutative_ring_contradiction": is_commutative_ring_contradiction,
         "has_mul_identity": has_mul_identity,
         "mul_identity": index_to_element[mul_identity] if has_mul_identity else "",
         "has_mul_zero_divisors": has_mul_zero_divisors,
