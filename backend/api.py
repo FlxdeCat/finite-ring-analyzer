@@ -91,9 +91,15 @@ def analyze_ring(data: RingInput):
 
     def get_zero_divisors():
         zero = get_add_identity()
+        if zero is None:
+            return False, ""
         for a in range(n):
+            if a == zero:
+                continue
             for b in range(n):
-                if a != zero and b != zero and mul_index[a][b] == zero:
+                if b == zero:
+                    continue
+                if mul_index[a][b] == zero:
                     return True, f"{index_to_element[a]} * {index_to_element[b]} = 0"
         return False, ""
 
