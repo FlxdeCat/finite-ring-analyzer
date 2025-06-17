@@ -127,7 +127,7 @@ def analyze_ring(data: RingInput):
     is_integral_domain = has_mul_identity and is_mul_commutative and not has_mul_zero_divisors
     is_mul_inverse, is_mul_inverse_contradiction = is_mul_inverse(mul_identity, add_identity) if has_mul_identity and has_add_identity else (False, "No identity")
     is_field = is_integral_domain and is_mul_inverse
-    is_divison_ring = has_mul_identity and is_mul_inverse and not is_mul_commutative
+    is_divison_ring = has_mul_identity and is_mul_inverse and is_mul_commutative
 
     is_commutative_ring_contradiction = is_ring_contradiction = is_field_contradiction = is_integral_domain_contradiction = is_divison_ring_contradiction = ""
 

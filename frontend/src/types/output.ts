@@ -41,7 +41,7 @@ export interface Output {
 
   is_field: boolean
   is_field_contradiction: string
-  is_divison_ring: Boolean
+  is_divison_ring: boolean
   is_divison_ring_contradiction: string
 
   insight: string

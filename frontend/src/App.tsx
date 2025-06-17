@@ -552,7 +552,7 @@ function App() {
                   <div className="mt-4 pt-4 border-t border-white/30">
                     <PropertyDisplay
                       label="Is a Division Ring"
-                      value={res.is_divison_ring as boolean}
+                      value={res.is_divison_ring}
                       contradiction={res.is_divison_ring_contradiction}
                     />
                     <PropertyDisplay
