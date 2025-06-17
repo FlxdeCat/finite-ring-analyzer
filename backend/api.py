@@ -230,6 +230,8 @@ def analyze_ring(data: RingInput):
         return fig_to_base64(fig)
 
     def zero_divisor_graph():
+        if not has_mul_zero_divisors:
+            return ""
         G = nx.Graph()
         zero = add_identity
         if zero is None:
