@@ -13,19 +13,17 @@ A tool for analyzing finite rings using custom-defined addition and multiplicati
 
 ### Backend
 
-1. Install dependencies:
-   
    ```bash
+   # 1. Install Python dependencies
    pip install -r requirements.txt
-   ```
-
-2. Start the API server:
    
-   ```bash
-    uvicorn api:app --reload
+   # 2. Set up environment variables
+   cp .env.example .env
+   # (Edit .env to provide necessary configuration if needed)
+   
+   # 3. Start the API server
+   uvicorn api:app --reload
    ```
-
-3. Open your browser and visit http://127.0.0.1:8000/docs to explore the interactive Swagger UI.
 
 ### Example Backend Input:
 
